@@ -1,7 +1,9 @@
-from gpiozero import LED
+#!/usr/bin/env python3
+
+import gpiozero
 import time
  
-relay = LED(17)
+relay = gpiozero.OutputDevice(17, active_high=True, initial_value=False)
 
-relay.on()
+relay.off()
 time.sleep(15)
