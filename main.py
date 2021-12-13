@@ -52,7 +52,7 @@ else:
         GPIO.output(GPIO_PIN, GPIO.LOW)
         data['setting'] = False
         time_on = datetime.now() - last_time
-        data['time_on'] = time_on.seconds
+        data['time_on'] = time_on.seconds//3600
         
 # Create dataframe from sensor data
 df = pd.DataFrame(data)
