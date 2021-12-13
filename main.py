@@ -1,9 +1,6 @@
 #!/usr/bin/landscape-python/venv/bin/python3
 
-
 import RPi.GPIO as GPIO
-import time
-
 from astral.sun import sun
 from datetime import date
 import pytz
@@ -11,6 +8,7 @@ from astral.geocoder import database, lookup
 from datetime import datetime
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 GPIO_PIN = 17
 GPIO.setup(GPIO_PIN, GPIO.OUT)
 
