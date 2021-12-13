@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/landscape-python/venv/bin/python3
+
 
 import RPi.GPIO as GPIO
 import time
@@ -20,7 +21,7 @@ sunrise = sunrise.astimezone(tz=pytz.timezone("US/Pacific"))
 sunset = s["sunset"]
 sunset = sunset.astimezone(tz=pytz.timezone("US/Pacific"))
 
-if sunset.time() < datetime.now().time() > sunrise.time():
+if sunset.time() < datetime.now().time():
     if GPIO.input(GPIO_PIN):
         pass
     else:
