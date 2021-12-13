@@ -6,6 +6,25 @@ from datetime import date
 import pytz
 from astral.geocoder import database, lookup
 from datetime import datetime
+from sqlalchemy import create_engine
+from dotenv import load_dotenv, set_key, find_dotenv
+import os
+import pandas as pd
+
+# Set globals
+DOTENV_FILE = find_dotenv()
+load_dotenv(DOTENV_FILE)
+DB_STRING = os.environ.get('DB_STRING')
+data = {'time': [datetime.today(),], 'device': 'landscape'}
+
+# Open database engine
+db = create_engine(DB_STRING)
+
+# Get last time entry from database
+with db.connect() as con:
+    sql = """SELECT time FROM lighting_status WHERE device = 'landscape' ORDER BY time DESC LIMIT 1;"""
+    result = con.execute(sql)
+    last_time = result.fetchone()[0]
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -24,8 +43,18 @@ if sunset.time() < datetime.now().time():
         pass
     else:
         GPIO.output(GPIO_PIN, GPIO.HIGH)
+        data['setting'] = True
 else:
     if not GPIO.input(GPIO_PIN):
         pass
     else:
         GPIO.output(GPIO_PIN, GPIO.LOW)
+        data['setting'] = True
+        time_on = datetime.now() - last_time
+        data['time_on'] = time_on.seconds//3600
+        
+# Create dataframe from sensor data
+df = pd.DataFrame()
+
+# Send new data to database
+df.to_sql('lighting_status', db, if_exists='append')
