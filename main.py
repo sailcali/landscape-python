@@ -5,7 +5,7 @@ from astral.sun import sun
 from datetime import date
 import pytz
 from astral.geocoder import database, lookup
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from dotenv import load_dotenv, set_key, find_dotenv
 import os
@@ -35,26 +35,28 @@ city = lookup("San Diego", database())
 s = sun(city.observer, date=date.today())
 sunrise = s["sunrise"]
 sunrise = sunrise.astimezone(tz=pytz.timezone("US/Pacific"))
+#sunset = s["sunset"] - timedelta(hours=8) # FOR TESTING ONLY
 sunset = s["sunset"]
 sunset = sunset.astimezone(tz=pytz.timezone("US/Pacific"))
 
 if sunset.time() < datetime.now().time():
     if GPIO.input(GPIO_PIN):
-        pass
+        quit()
     else:
         GPIO.output(GPIO_PIN, GPIO.HIGH)
         data['setting'] = True
 else:
     if not GPIO.input(GPIO_PIN):
-        pass
+        quit()
     else:
         GPIO.output(GPIO_PIN, GPIO.LOW)
-        data['setting'] = True
+        data['setting'] = False
         time_on = datetime.now() - last_time
-        data['time_on'] = time_on.seconds//3600
+        data['time_on'] = time_on.seconds
         
 # Create dataframe from sensor data
-df = pd.DataFrame()
+df = pd.DataFrame(data)
+df.set_index(['time'], inplace=True)
 
 # Send new data to database
 df.to_sql('lighting_status', db, if_exists='append')
