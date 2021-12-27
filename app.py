@@ -1,5 +1,6 @@
 from flask import Flask, request, abort, jsonify
 import RPi.GPIO as GPIO
+from get_temps import get_pi_details
 
 app = Flask(__name__)
 
@@ -10,8 +11,8 @@ def get_status():
     GPIO.setwarnings(False)
     GPIO_PIN = 17
     GPIO.setup(GPIO_PIN, GPIO.OUT)
-    
-    return jsonify(GPIO.input(GPIO_PIN))
+    sensors = get_pi_details()
+    return jsonify([GPIO.input(GPIO_PIN), sensors])
 
 
 if __name__ == '__main__':
