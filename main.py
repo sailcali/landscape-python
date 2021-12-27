@@ -28,7 +28,7 @@ with db.connect() as con:
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO_PIN = 17
+GPIO_PIN = 27
 GPIO.setup(GPIO_PIN, GPIO.OUT)
 
 city = lookup("San Diego", database())
