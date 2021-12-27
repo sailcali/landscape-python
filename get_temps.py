@@ -1,5 +1,4 @@
-import adafruit_dht as dht
-from board import D4
+import Adafruit_DHT as dht
 import time
 
 DHT_TRIES = 6
@@ -10,12 +9,12 @@ def get_pi_details():
     DHT_TRIES -= 1
     if DHT_TRIES == 0:
         return None, None
-    sensor = dht.DHT22(D4)
+    sensor = dht.DHT22
     try:
-        farenheight = sensor.temperature * (9 / 5) + 32
-        hum = sensor.humidity
+        humidity, temperature = dht.read_retry(sensor, 4)
+        farenheight = temperature * (9 / 5) + 32
         sensor.exit()
-        return farenheight, hum
+        return farenheight, humidity
     except Exception:
         time.sleep(2)
         sensor.exit()
