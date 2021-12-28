@@ -13,8 +13,6 @@ def get_pi_details():
     try:
         humidity, temperature = dht.read_retry(sensor, 4)
         farenheight = temperature * (9 / 5) + 32
-        sensor.exit()
         return farenheight, humidity
     except Exception:
         time.sleep(2)
-        sensor.exit()
