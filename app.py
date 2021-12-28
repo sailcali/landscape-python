@@ -9,7 +9,7 @@ app = Flask(__name__)
 def get_status():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO_PIN = 17
+    GPIO_PIN = 27
     GPIO.setup(GPIO_PIN, GPIO.OUT)
     temperature, humidity = get_pi_details()
     lighting_state = GPIO.input(GPIO_PIN)
