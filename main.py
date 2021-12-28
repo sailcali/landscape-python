@@ -11,7 +11,7 @@ import configparser
 
 def change_landscape(on_off=False, delay_request=False):
     config = configparser.ConfigParser()
-    config.readfp(open(r'delay_time.conf'))
+    config.read_file(open(r'delay_time.conf'))
     value = config.get('DelayDatetime', 'value')
     delay_datetime = datetime.strptime(value, '%Y-%m-%d %H:%M')
     if delay_request:
@@ -19,10 +19,6 @@ def change_landscape(on_off=False, delay_request=False):
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
     
-    if delay_datetime > datetime.today():
-        print('delayed')
-        quit()
-
     data = {'time': datetime.today(), 'device': 'landscape'}
 
     GPIO.setmode(GPIO.BCM)
@@ -42,13 +38,16 @@ def change_landscape(on_off=False, delay_request=False):
         GPIO.output(GPIO_PIN, GPIO.HIGH)
         data['state'] = True
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
-        quit()
+        return
     
     elif on_off == 0 and GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.LOW)
         data['setting'] = False
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
-        quit()
+        return
+    
+    if delay_datetime > datetime.today():
+        return
 
     if sunset.time() < datetime.now().time():
         if GPIO.input(GPIO_PIN):
