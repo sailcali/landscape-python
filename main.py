@@ -18,6 +18,7 @@ def change_landscape(on_off=False, delay_request=False):
         config.set('DelayDatetime', 'value', delay_request)
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
+    
     if delay_datetime > datetime.today():
         print('delayed')
         quit()
@@ -36,16 +37,19 @@ def change_landscape(on_off=False, delay_request=False):
     #sunset = s["sunset"] - timedelta(hours=8) # FOR TESTING ONLY
     sunset = s["sunset"]
     sunset = sunset.astimezone(tz=pytz.timezone("US/Pacific"))
-    if on_off == 1:
+    
+    if on_off == 1 and not GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.HIGH)
-        data['setting'] = True
+        data['state'] = True
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
         quit()
-    elif on_off == 0:
+    
+    elif on_off == 0 and GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.LOW)
         data['setting'] = False
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
         quit()
+
     if sunset.time() < datetime.now().time():
         if GPIO.input(GPIO_PIN):
             quit()
