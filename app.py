@@ -15,7 +15,7 @@ CORS(app)
 def change_landscape_state():
     body = request.get_json()
     delay_time = datetime.today() + timedelta(minutes=int(body["delay_time"]))
-    change_landscape(body['state'], body['delay_time'])
+    change_landscape(body['state'], delay_time)
     return make_response({'new_status': body['state'], 'new_delay': delay_time}, 201)
 
 @app.route('/get-status', methods=['GET'])
