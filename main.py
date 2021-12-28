@@ -10,10 +10,8 @@ import requests
 import configparser
 import logging
 
-logging.basicConfig(level=logging.DEBUG, filename='main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-logging.info('Job running')
-
 def change_landscape(on_off=False, delay_request=False):
+    logging.basicConfig(level=logging.DEBUG, filename='main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     config = configparser.ConfigParser()
     config.read_file(open(r'delay_time.conf'))
     value = config.get('DelayDatetime', 'value')
