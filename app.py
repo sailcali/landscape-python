@@ -10,10 +10,7 @@ def change_landscape_state():
     body = request.get_json()
     GPIO_PIN = 27
     GPIO.setup(GPIO_PIN, GPIO.OUT)
-    if body['state'] and not GPIO.input(GPIO_PIN):
-        change_landscape(1, body['delay_time'])
-    elif GPIO.input(GPIO_PIN) and not body['state']:
-        change_landscape(0, body['delay_time'])
+    change_landscape(body['state'], body['delay_time'])
     return make_response({'new_status': body['state'], 'new_delay': body['delay_time']}, 201)
 
 @app.route('/get-status', methods=['GET'])
