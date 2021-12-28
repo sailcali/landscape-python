@@ -8,7 +8,7 @@ from astral.geocoder import database, lookup
 from datetime import datetime
 import requests
 
-data = {'time': datetime.today(), 'device': 'landscape'}
+data = {'time': datetime.strftime(datetime.today(),'%Y-%m-%d %H:%M'), 'device': 'landscape'}
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -28,13 +28,13 @@ if sunset.time() < datetime.now().time():
         quit()
     else:
         GPIO.output(GPIO_PIN, GPIO.HIGH)
-        data['setting'] = True
+        data['state'] = True
 else:
     if not GPIO.input(GPIO_PIN):
         quit()
     else:
         GPIO.output(GPIO_PIN, GPIO.LOW)
-        data['setting'] = False
-        
+        data['state'] = False
+
 # # Send new data to database
-requests.post('http://192.168.86.31/landscape/update-state', params=data)
+requests.post('http://192.168.86.205/landscape/update-state', json=data)
