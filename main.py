@@ -43,13 +43,13 @@ def change_landscape(on_off=False, delay_request=False):
     if on_off == 1 and not GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.HIGH)
         data['state'] = True
-        requests.post('http://192.168.86.205/landscape/update-state', params=data)
+        requests.post('http://192.168.86.205/landscape/update-state', json=data)
         return
     
     elif on_off == 0 and GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.LOW)
         data['state'] = False
-        requests.post('http://192.168.86.205/landscape/update-state', params=data)
+        requests.post('http://192.168.86.205/landscape/update-state', json=data)
         return
     logging.info('on_off tree complete')
     
@@ -71,7 +71,7 @@ def change_landscape(on_off=False, delay_request=False):
             data['state'] = False
             
     # Send new data to database
-    requests.post('http://192.168.86.205/landscape/update-state', params=data)
+    requests.post('http://192.168.86.205/landscape/update-state', json=data)
     logging.info('update sent')
 if __name__ == '__main__':
     change_landscape()
