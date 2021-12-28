@@ -11,8 +11,9 @@ def get_status():
     GPIO.setwarnings(False)
     GPIO_PIN = 17
     GPIO.setup(GPIO_PIN, GPIO.OUT)
-    sensors = get_pi_details()
-    return jsonify([GPIO.input(GPIO_PIN), sensors])
+    temperature, humidity = get_pi_details()
+    lighting_state = GPIO.input(GPIO_PIN)
+    return jsonify([temperature, humidity, lighting_state])
 
 
 if __name__ == '__main__':
