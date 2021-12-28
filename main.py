@@ -8,6 +8,10 @@ from astral.geocoder import database, lookup
 from datetime import datetime
 import requests
 import configparser
+import logging
+
+logging.basicConfig(level=logging.DEBUG, filename='main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logging.info('Job running')
 
 def change_landscape(on_off=False, delay_request=False):
     config = configparser.ConfigParser()
@@ -18,14 +22,14 @@ def change_landscape(on_off=False, delay_request=False):
         config.set('DelayDatetime', 'value', delay_request)
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
-    
+    logging.info('config opened')
     data = {'time': datetime.today(), 'device': 'landscape'}
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO_PIN = 27
     GPIO.setup(GPIO_PIN, GPIO.OUT)
-
+    logging.info('GPIO set')
     city = lookup("San Diego", database())
     s = sun(city.observer, date=date.today())
     sunrise = s["sunrise"]
@@ -45,10 +49,10 @@ def change_landscape(on_off=False, delay_request=False):
         data['setting'] = False
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
         return
-    
+    logging.info('on_off tree complete')
     if delay_datetime > datetime.today():
         return
-
+    logging.info('delay_datetime OK')
     if sunset.time() < datetime.now().time():
         if GPIO.input(GPIO_PIN):
             quit()
@@ -64,6 +68,6 @@ def change_landscape(on_off=False, delay_request=False):
             
     # Send new data to database
     requests.post('http://192.168.86.31/landscape/update-state', params=data)
-
+    logging.info('update sent')
 if __name__ == '__main__':
     change_landscape()
