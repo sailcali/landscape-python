@@ -71,5 +71,4 @@ def change_landscape(on_off=False, delay_request=False):
     requests.post('http://192.168.86.31/landscape/update-state', params=data)
     logging.info('update sent')
 if __name__ == '__main__':
-    logging.info('on main')
     change_landscape()

@@ -2,8 +2,10 @@ from flask import Flask, request, abort, jsonify, make_response
 import RPi.GPIO as GPIO
 from get_temps import get_pi_details
 from main import change_landscape
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/change-state', methods=['POST'])
 def change_landscape_state():
