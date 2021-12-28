@@ -17,12 +17,13 @@ def change_landscape(on_off=False, delay_request=False):
     logging.basicConfig(level=logging.DEBUG, filename='main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     config = configparser.ConfigParser()
     config.read_file(open(r'delay_time.conf'))
-    value = config.get('DelayDatetime', 'value')
-    delay_datetime = datetime.strptime(value, '%Y-%m-%d %H:%M')
     if delay_request:
-        config.set('DelayDatetime', 'value', delay_request)
+        config.set('DelayDatetime', 'value', datetime.strftime(delay_request, '%Y-%m-%d %H-%M'))
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
+    value = config.get('DelayDatetime', 'value')
+    delay_datetime = datetime.strptime(value, '%Y-%m-%d %H:%M')
+
     logging.info('config opened')
     data = {'time': datetime.today(), 'device': 'landscape'}
 
@@ -51,8 +52,10 @@ def change_landscape(on_off=False, delay_request=False):
         requests.post('http://192.168.86.31/landscape/update-state', params=data)
         return
     logging.info('on_off tree complete')
+    
     if delay_datetime > datetime.today():
         return
+        
     logging.info('delay_datetime OK')
     if sunset.time() < datetime.now().time():
         if GPIO.input(GPIO_PIN):

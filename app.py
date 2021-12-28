@@ -4,6 +4,7 @@ from get_temps import get_pi_details
 from main import change_landscape
 from flask_cors import CORS
 import configparser
+from datetime import datetime, timedelta
 
 config = configparser.ConfigParser()
 
@@ -13,10 +14,9 @@ CORS(app)
 @app.route('/change-state', methods=['POST'])
 def change_landscape_state():
     body = request.get_json()
-    #GPIO_PIN = 27
-    #GPIO.setup(GPIO_PIN, GPIO.OUT)
+    delay_time = datetime.today() + timedelta(minutes=body["delay_time"])
     change_landscape(body['state'], body['delay_time'])
-    return make_response({'new_status': body['state'], 'new_delay': body['delay_time']}, 201)
+    return make_response({'new_status': body['state'], 'new_delay': delay_time}, 201)
     #return jsonify([]), 201
 
 @app.route('/get-status', methods=['GET'])
