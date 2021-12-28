@@ -18,7 +18,7 @@ def change_landscape(on_off=False, delay_request=False):
     config = configparser.ConfigParser()
     config.read_file(open(r'delay_time.conf'))
     if delay_request:
-        config.set('DelayDatetime', 'value', datetime.strftime(delay_request, '%Y-%m-%d %H-%M'))
+        config.set('DelayDatetime', 'value', datetime.strftime(delay_request, '%Y-%m-%d %H:%M'))
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
     value = config.get('DelayDatetime', 'value')
