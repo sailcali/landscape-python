@@ -13,19 +13,19 @@ import requests
 import configparser
 import logging
 
-def change_landscape(on_off=False, delay_request=False):
+def change_landscape(on_off=3, delay_request=False):
     logging.basicConfig(level=logging.DEBUG, filename='main.log', filemode='w', format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
     config = configparser.ConfigParser()
     config.read_file(open(r'delay_time.conf'))
     if delay_request:
-        config.set('DelayDatetime', 'value', datetime.strftime(delay_request, '%Y-%m-%d %H:%M'))
+        config.set('DelayDatetime', 'value', datetime.strftime(delay_request, '%Y-%m-%d %H:%M:%S'))
         with open('delay_time.conf', 'w') as configfile:
             config.write(configfile)
     value = config.get('DelayDatetime', 'value')
-    delay_datetime = datetime.strptime(value, '%Y-%m-%d %H:%M')
+    delay_datetime = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
 
     logging.info('config opened')
-    data = {'time': datetime.today(), 'device': 'landscape'}
+    data = {'time': datetime.strftime(datetime.today(), '%Y-%m-%d %H:%M:%S'), 'device': 'landscape'}
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -43,13 +43,13 @@ def change_landscape(on_off=False, delay_request=False):
     if on_off == 1 and not GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.HIGH)
         data['state'] = True
-        requests.post('http://192.168.86.205/landscape/update-state', json=data)
+        logging.info(requests.post('http://192.168.86.205/landscape/update-state', json=data))
         return
     
     elif on_off == 0 and GPIO.input(GPIO_PIN):
         GPIO.output(GPIO_PIN, GPIO.LOW)
         data['state'] = False
-        requests.post('http://192.168.86.205/landscape/update-state', json=data)
+        logging.info(requests.post('http://192.168.86.205/landscape/update-state', json=data))
         return
     logging.info('on_off tree complete')
     
@@ -57,18 +57,19 @@ def change_landscape(on_off=False, delay_request=False):
         return
 
     logging.info('delay_datetime OK')
+    logging.info(GPIO.input(GPIO_PIN))
     if sunset.time() < datetime.now().time():
         if GPIO.input(GPIO_PIN):
-            quit()
+            return
         else:
             GPIO.output(GPIO_PIN, GPIO.HIGH)
-            data['state'] = True
+            data['state'] = False
     else:
         if not GPIO.input(GPIO_PIN):
-            quit()
+            return
         else:
             GPIO.output(GPIO_PIN, GPIO.LOW)
-            data['state'] = False
+            data['state'] = True
             
     # Send new data to database
     requests.post('http://192.168.86.205/landscape/update-state', json=data)
