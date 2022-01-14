@@ -63,13 +63,13 @@ def change_landscape(on_off=3, delay_request=False):
             return
         else:
             GPIO.output(GPIO_PIN, GPIO.HIGH)
-            data['state'] = False
+            data['state'] = True
     else:
         if not GPIO.input(GPIO_PIN):
             return
         else:
             GPIO.output(GPIO_PIN, GPIO.LOW)
-            data['state'] = True
+            data['state'] = False
             
     # Send new data to database
     requests.post('http://192.168.86.205/landscape/update-state', json=data)
