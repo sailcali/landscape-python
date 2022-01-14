@@ -8,7 +8,7 @@ from astral.sun import sun
 from datetime import date
 import pytz
 from astral.geocoder import database, lookup
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import configparser
 import logging
@@ -36,8 +36,8 @@ def change_landscape(on_off=3, delay_request=False):
     s = sun(city.observer, date=date.today())
     sunrise = s["sunrise"]
     sunrise = sunrise.astimezone(tz=pytz.timezone("US/Pacific"))
-    #sunset = s["sunset"] - timedelta(hours=8) # FOR TESTING ONLY
-    sunset = s["sunset"]
+    sunset = s["sunset"] + timedelta(minutes=15)
+    
     sunset = sunset.astimezone(tz=pytz.timezone("US/Pacific"))
     
     if on_off == 1 and not GPIO.input(GPIO_PIN):
