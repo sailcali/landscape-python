@@ -26,9 +26,9 @@ def update_led(temp):
     GPIO.setwarnings(False)
     GPIO_PIN = 17
     GPIO.setup(GPIO_PIN, GPIO.OUT)
-    response = requests.get('http://192.168.86.205/api/currrent_temps')
+    response = requests.get('http://192.168.86.205/api/current_temps')
     current_temps = response.json()
-    if current_temps['living_room_temp'] <= temp:
+    if current_temps['living_room_temp'] >= temp:
         if GPIO.input(GPIO_PIN):
             GPIO.output(GPIO_PIN, GPIO.LOW)
     else:
